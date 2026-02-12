@@ -1,0 +1,91 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Modern Light Minimal Theme - Clean and Professional -->
+    <color name="md_theme_light_primary">#2563EB</color>
+    <color name="md_theme_light_onPrimary">#FFFFFF</color>
+    <color name="md_theme_light_primaryContainer">#DBEAFE</color>
+    <color name="md_theme_light_onPrimaryContainer">#1E40AF</color>
+    <color name="md_theme_light_secondary">#64748B</color>
+    <color name="md_theme_light_onSecondary">#FFFFFF</color>
+    <color name="md_theme_light_secondaryContainer">#F1F5F9</color>
+    <color name="md_theme_light_onSecondaryContainer">#334155</color>
+    <color name="md_theme_light_tertiary">#7C3AED</color>
+    <color name="md_theme_light_onTertiary">#FFFFFF</color>
+    <color name="md_theme_light_tertiaryContainer">#EDE9FE</color>
+    <color name="md_theme_light_onTertiaryContainer">#5B21B6</color>
+    <color name="md_theme_light_error">#DC2626</color>
+    <color name="md_theme_light_onError">#FFFFFF</color>
+    <color name="md_theme_light_errorContainer">#FEE2E2</color>
+    <color name="md_theme_light_onErrorContainer">#991B1B</color>
+    <color name="md_theme_light_background">#F8FAFC</color>
+    <color name="md_theme_light_onBackground">#0F172A</color>
+    <color name="md_theme_light_surface">#FFFFFF</color>
+    <color name="md_theme_light_onSurface">#0F172A</color>
+    <color name="md_theme_light_surfaceVariant">#F1F5F9</color>
+    <color name="md_theme_light_onSurfaceVariant">#475569</color>
+    <color name="md_theme_light_outline">#CBD5E1</color>
+    <color name="md_theme_light_inverseOnSurface">#F8FAFC</color>
+    <color name="md_theme_light_inverseSurface">#1E293B</color>
+    <color name="md_theme_light_inversePrimary">#93C5FD</color>
+    <color name="md_theme_light_surfaceTint">#2563EB</color>
+
+    <!-- Dark theme colors -->
+    <color name="md_theme_dark_primary">#60A5FA</color>
+    <color name="md_theme_dark_onPrimary">#1E3A5F</color>
+    <color name="md_theme_dark_primaryContainer">#1E40AF</color>
+    <color name="md_theme_dark_onPrimaryContainer">#DBEAFE</color>
+    <color name="md_theme_dark_secondary">#94A3B8</color>
+    <color name="md_theme_dark_onSecondary">#1E293B</color>
+    <color name="md_theme_dark_secondaryContainer">#334155</color>
+    <color name="md_theme_dark_onSecondaryContainer">#E2E8F0</color>
+    <color name="md_theme_dark_tertiary">#A78BFA</color>
+    <color name="md_theme_dark_onTertiary">#2E1065</color>
+    <color name="md_theme_dark_tertiaryContainer">#5B21B6</color>
+    <color name="md_theme_dark_onTertiaryContainer">#EDE9FE</color>
+    <color name="md_theme_dark_error">#FCA5A5</color>
+    <color name="md_theme_dark_onError">#7F1D1D</color>
+    <color name="md_theme_dark_errorContainer">#991B1B</color>
+    <color name="md_theme_dark_onErrorContainer">#FEE2E2</color>
+    <color name="md_theme_dark_background">#0F172A</color>
+    <color name="md_theme_dark_onBackground">#E2E8F0</color>
+    <color name="md_theme_dark_surface">#1E293B</color>
+    <color name="md_theme_dark_onSurface">#E2E8F0</color>
+    <color name="md_theme_dark_surfaceVariant">#334155</color>
+    <color name="md_theme_dark_onSurfaceVariant">#94A3B8</color>
+    <color name="md_theme_dark_outline">#475569</color>
+    <color name="md_theme_dark_inverseOnSurface">#0F172A</color>
+    <color name="md_theme_dark_inverseSurface">#E2E8F0</color>
+    <color name="md_theme_dark_inversePrimary">#2563EB</color>
+    <color name="md_theme_dark_surfaceTint">#60A5FA</color>
+
+    <!-- Emotion colors - Modern, distinct palette -->
+    <color name="emotion_joy">#10B981</color>
+    <color name="emotion_joy_light">#D1FAE5</color>
+    <color name="emotion_neutral">#F59E0B</color>
+    <color name="emotion_neutral_light">#FEF3C7</color>
+    <color name="emotion_sad">#6366F1</color>
+    <color name="emotion_sad_light">#E0E7FF</color>
+    <color name="emotion_anger">#EF4444</color>
+    <color name="emotion_anger_light">#FEE2E2</color>
+    <color name="emotion_fear">#8B5CF6</color>
+    <color name="emotion_fear_light">#EDE9FE</color>
+    <color name="emotion_surprise">#EC4899</color>
+    <color name="emotion_surprise_light">#FCE7F3</color>
+
+    <!-- Card and surface colors -->
+    <color name="card_background">#FFFFFF</color>
+    <color name="card_stroke">#E2E8F0</color>
+    <color name="divider">#E2E8F0</color>
+
+    <!-- Text colors -->
+    <color name="text_primary">#0F172A</color>
+    <color name="text_secondary">#64748B</color>
+    <color name="text_hint">#94A3B8</color>
+
+    <!-- Status colors -->
+    <color name="status_online">#10B981</color>
+    <color name="status_offline">#F59E0B</color>
+    <color name="status_recording">#EF4444</color>
+
+    <color name="ic_launcher_background">#DBEAFE</color>
+</resources>

@@ -1,0 +1,54 @@
+[
+    {
+        "merged": "com.example.voiceemotionanalyzer.app-debug-44:/xml_file_paths.xml.flat",
+        "source": "com.example.voiceemotionanalyzer.app-main-46:/xml/file_paths.xml"
+    },
+    {
+        "merged": "com.example.voiceemotionanalyzer.app-debug-44:/drawable_ic_launcher_background.xml.flat",
+        "source": "com.example.voiceemotionanalyzer.app-main-46:/drawable/ic_launcher_background.xml"
+    },
+    {
+        "merged": "com.example.voiceemotionanalyzer.app-debug-44:/drawable_ic_share.xml.flat",
+        "source": "com.example.voiceemotionanalyzer.app-main-46:/drawable/ic_share.xml"
+    },
+    {
+        "merged": "com.example.voiceemotionanalyzer.app-debug-44:/menu_main_menu.xml.flat",
+        "source": "com.example.voiceemotionanalyzer.app-main-46:/menu/main_menu.xml"
+    },
+    {
+        "merged": "com.example.voiceemotionanalyzer.app-debug-44:/layout_activity_main.xml.flat",
+        "source": "com.example.voiceemotionanalyzer.app-main-46:/layout/activity_main.xml"
+    },
+    {
+        "merged": "com.example.voiceemotionanalyzer.app-debug-44:/drawable_emotion_badge_background.xml.flat",
+        "source": "com.example.voiceemotionanalyzer.app-main-46:/drawable/emotion_badge_background.xml"
+    },
+    {
+        "merged": "com.example.voiceemotionanalyzer.app-debug-44:/drawable_ic_mic.xml.flat",
+        "source": "com.example.voiceemotionanalyzer.app-main-46:/drawable/ic_mic.xml"
+    },
+    {
+        "merged": "com.example.voiceemotionanalyzer.app-debug-44:/drawable_status_indicator.xml.flat",
+        "source": "com.example.voiceemotionanalyzer.app-main-46:/drawable/status_indicator.xml"
+    },
+    {
+        "merged": "com.example.voiceemotionanalyzer.app-debug-44:/layout_item_emotion.xml.flat",
+        "source": "com.example.voiceemotionanalyzer.app-main-46:/layout/item_emotion.xml"
+    },
+    {
+        "merged": "com.example.voiceemotionanalyzer.app-debug-44:/drawable_ic_stop.xml.flat",
+        "source": "com.example.voiceemotionanalyzer.app-main-46:/drawable/ic_stop.xml"
+    },
+    {
+        "merged": "com.example.voiceemotionanalyzer.app-debug-44:/drawable_ic_launcher_foreground.xml.flat",
+        "source": "com.example.voiceemotionanalyzer.app-main-46:/drawable/ic_launcher_foreground.xml"
+    },
+    {
+        "merged": "com.example.voiceemotionanalyzer.app-debug-44:/mipmap-anydpi-v26_ic_launcher_round.xml.flat",
+        "source": "com.example.voiceemotionanalyzer.app-main-46:/mipmap-anydpi-v26/ic_launcher_round.xml"
+    },
+    {
+        "merged": "com.example.voiceemotionanalyzer.app-debug-44:/mipmap-anydpi-v26_ic_launcher.xml.flat",
+        "source": "com.example.voiceemotionanalyzer.app-main-46:/mipmap-anydpi-v26/ic_launcher.xml"
+    }
+]

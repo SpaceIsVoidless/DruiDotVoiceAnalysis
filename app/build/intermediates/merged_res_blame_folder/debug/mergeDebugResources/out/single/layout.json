@@ -1,0 +1,10 @@
+[
+    {
+        "merged": "com.example.voiceemotionanalyzer.app-mergeDebugResources-43:/layout/activity_main.xml",
+        "source": "com.example.voiceemotionanalyzer.app-main-46:/layout/activity_main.xml"
+    },
+    {
+        "merged": "com.example.voiceemotionanalyzer.app-mergeDebugResources-43:/layout/item_emotion.xml",
+        "source": "com.example.voiceemotionanalyzer.app-main-46:/layout/item_emotion.xml"
+    }
+]

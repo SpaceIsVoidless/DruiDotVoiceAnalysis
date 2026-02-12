@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="card_background">#FFFFFF</color>
+    <color name="card_stroke">#E2E8F0</color>
+    <color name="divider">#E2E8F0</color>
+    <color name="emotion_anger">#EF4444</color>
+    <color name="emotion_anger_light">#FEE2E2</color>
+    <color name="emotion_fear">#8B5CF6</color>
+    <color name="emotion_fear_light">#EDE9FE</color>
+    <color name="emotion_joy">#10B981</color>
+    <color name="emotion_joy_light">#D1FAE5</color>
+    <color name="emotion_neutral">#F59E0B</color>
+    <color name="emotion_neutral_light">#FEF3C7</color>
+    <color name="emotion_sad">#6366F1</color>
+    <color name="emotion_sad_light">#E0E7FF</color>
+    <color name="emotion_surprise">#EC4899</color>
+    <color name="emotion_surprise_light">#FCE7F3</color>
+    <color name="ic_launcher_background">#DBEAFE</color>
+    <color name="md_theme_dark_background">#0F172A</color>
+    <color name="md_theme_dark_error">#FCA5A5</color>
+    <color name="md_theme_dark_errorContainer">#991B1B</color>
+    <color name="md_theme_dark_inverseOnSurface">#0F172A</color>
+    <color name="md_theme_dark_inversePrimary">#2563EB</color>
+    <color name="md_theme_dark_inverseSurface">#E2E8F0</color>
+    <color name="md_theme_dark_onBackground">#E2E8F0</color>
+    <color name="md_theme_dark_onError">#7F1D1D</color>
+    <color name="md_theme_dark_onErrorContainer">#FEE2E2</color>
+    <color name="md_theme_dark_onPrimary">#1E3A5F</color>
+    <color name="md_theme_dark_onPrimaryContainer">#DBEAFE</color>
+    <color name="md_theme_dark_onSecondary">#1E293B</color>
+    <color name="md_theme_dark_onSecondaryContainer">#E2E8F0</color>
+    <color name="md_theme_dark_onSurface">#E2E8F0</color>
+    <color name="md_theme_dark_onSurfaceVariant">#94A3B8</color>
+    <color name="md_theme_dark_onTertiary">#2E1065</color>
+    <color name="md_theme_dark_onTertiaryContainer">#EDE9FE</color>
+    <color name="md_theme_dark_outline">#475569</color>
+    <color name="md_theme_dark_primary">#60A5FA</color>
+    <color name="md_theme_dark_primaryContainer">#1E40AF</color>
+    <color name="md_theme_dark_secondary">#94A3B8</color>
+    <color name="md_theme_dark_secondaryContainer">#334155</color>
+    <color name="md_theme_dark_surface">#1E293B</color>
+    <color name="md_theme_dark_surfaceTint">#60A5FA</color>
+    <color name="md_theme_dark_surfaceVariant">#334155</color>
+    <color name="md_theme_dark_tertiary">#A78BFA</color>
+    <color name="md_theme_dark_tertiaryContainer">#5B21B6</color>
+    <color name="md_theme_light_background">#F8FAFC</color>
+    <color name="md_theme_light_error">#DC2626</color>
+    <color name="md_theme_light_errorContainer">#FEE2E2</color>
+    <color name="md_theme_light_inverseOnSurface">#F8FAFC</color>
+    <color name="md_theme_light_inversePrimary">#93C5FD</color>
+    <color name="md_theme_light_inverseSurface">#1E293B</color>
+    <color name="md_theme_light_onBackground">#0F172A</color>
+    <color name="md_theme_light_onError">#FFFFFF</color>
+    <color name="md_theme_light_onErrorContainer">#991B1B</color>
+    <color name="md_theme_light_onPrimary">#FFFFFF</color>
+    <color name="md_theme_light_onPrimaryContainer">#1E40AF</color>
+    <color name="md_theme_light_onSecondary">#FFFFFF</color>
+    <color name="md_theme_light_onSecondaryContainer">#334155</color>
+    <color name="md_theme_light_onSurface">#0F172A</color>
+    <color name="md_theme_light_onSurfaceVariant">#475569</color>
+    <color name="md_theme_light_onTertiary">#FFFFFF</color>
+    <color name="md_theme_light_onTertiaryContainer">#5B21B6</color>
+    <color name="md_theme_light_outline">#CBD5E1</color>
+    <color name="md_theme_light_primary">#2563EB</color>
+    <color name="md_theme_light_primaryContainer">#DBEAFE</color>
+    <color name="md_theme_light_secondary">#64748B</color>
+    <color name="md_theme_light_secondaryContainer">#F1F5F9</color>
+    <color name="md_theme_light_surface">#FFFFFF</color>
+    <color name="md_theme_light_surfaceTint">#2563EB</color>
+    <color name="md_theme_light_surfaceVariant">#F1F5F9</color>
+    <color name="md_theme_light_tertiary">#7C3AED</color>
+    <color name="md_theme_light_tertiaryContainer">#EDE9FE</color>
+    <color name="status_offline">#F59E0B</color>
+    <color name="status_online">#10B981</color>
+    <color name="status_recording">#EF4444</color>
+    <color name="text_hint">#94A3B8</color>
+    <color name="text_primary">#0F172A</color>
+    <color name="text_secondary">#64748B</color>
+    <string name="app_name">Emotion Analyzer</string>
+    <string name="confidence_label">Confidence:</string>
+    <string name="confidence_placeholder">—</string>
+    <string name="current_emotion">Current Emotion</string>
+    <string name="emotion_distribution">Emotion Distribution</string>
+    <string name="emotion_timeline">Emotion Timeline</string>
+    <string name="export_failed">Export failed</string>
+    <string name="low_confidence">Low confidence, skipping chunk</string>
+    <string name="mode_offline">Offline</string>
+    <string name="mode_online">Online</string>
+    <string name="no_data">No data yet. Tap record to start analyzing.</string>
+    <string name="no_mic">Speech recognition not available on this device</string>
+    <string name="permission_denied">Microphone permission denied</string>
+    <string name="recent_analysis">Recent Analysis</string>
+    <string name="record_toggle">Toggle recording</string>
+    <string name="share_export">Share export</string>
+    <string name="start_recording">Start Recording</string>
+    <string name="status_analyzing">Analyzing...</string>
+    <string name="status_ready">Ready to analyze</string>
+    <string name="status_recording">Recording...</string>
+    <string name="stop_recording">Stop Recording</string>
+    <style name="TextAppearance.App.Body" parent="TextAppearance.Material3.BodyMedium">
+        <item name="fontFamily">sans-serif</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+    <style name="TextAppearance.App.Caption" parent="TextAppearance.Material3.BodySmall">
+        <item name="fontFamily">sans-serif</item>
+        <item name="android:textSize">12sp</item>
+    </style>
+    <style name="TextAppearance.App.Headline" parent="TextAppearance.Material3.HeadlineLarge">
+        <item name="fontFamily">sans-serif-medium</item>
+        <item name="android:textSize">32sp</item>
+    </style>
+    <style name="TextAppearance.App.Label" parent="TextAppearance.Material3.LabelMedium">
+        <item name="fontFamily">sans-serif-medium</item>
+        <item name="android:textSize">12sp</item>
+    </style>
+    <style name="TextAppearance.App.Title" parent="TextAppearance.Material3.TitleMedium">
+        <item name="fontFamily">sans-serif-medium</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">@color/text_primary</item>
+    </style>
+    <style name="TextAppearance.App.Toolbar" parent="TextAppearance.Material3.TitleLarge">
+        <item name="fontFamily">sans-serif-medium</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:textColor">@color/text_primary</item>
+    </style>
+    <style name="Theme.VoiceEmotionAnalyzer" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/md_theme_light_primary</item>
+        <item name="colorOnPrimary">@color/md_theme_light_onPrimary</item>
+        <item name="colorPrimaryContainer">@color/md_theme_light_primaryContainer</item>
+        <item name="colorOnPrimaryContainer">@color/md_theme_light_onPrimaryContainer</item>
+        <item name="colorSecondary">@color/md_theme_light_secondary</item>
+        <item name="colorOnSecondary">@color/md_theme_light_onSecondary</item>
+        <item name="colorSecondaryContainer">@color/md_theme_light_secondaryContainer</item>
+        <item name="colorOnSecondaryContainer">@color/md_theme_light_onSecondaryContainer</item>
+        <item name="colorTertiary">@color/md_theme_light_tertiary</item>
+        <item name="colorOnTertiary">@color/md_theme_light_onTertiary</item>
+        <item name="colorTertiaryContainer">@color/md_theme_light_tertiaryContainer</item>
+        <item name="colorOnTertiaryContainer">@color/md_theme_light_onTertiaryContainer</item>
+        <item name="colorError">@color/md_theme_light_error</item>
+        <item name="colorOnError">@color/md_theme_light_onError</item>
+        <item name="colorErrorContainer">@color/md_theme_light_errorContainer</item>
+        <item name="colorOnErrorContainer">@color/md_theme_light_onErrorContainer</item>
+        <item name="android:colorBackground">@color/md_theme_light_background</item>
+        <item name="colorOnBackground">@color/md_theme_light_onBackground</item>
+        <item name="colorSurface">@color/md_theme_light_surface</item>
+        <item name="colorOnSurface">@color/md_theme_light_onSurface</item>
+        <item name="colorSurfaceVariant">@color/md_theme_light_surfaceVariant</item>
+        <item name="colorOnSurfaceVariant">@color/md_theme_light_onSurfaceVariant</item>
+        <item name="colorOutline">@color/md_theme_light_outline</item>
+        <item name="colorSurfaceInverse">@color/md_theme_light_inverseSurface</item>
+        <item name="colorOnSurfaceInverse">@color/md_theme_light_inverseOnSurface</item>
+        <item name="colorPrimaryInverse">@color/md_theme_light_inversePrimary</item>
+    </style>
+</resources>
