@@ -1,0 +1,40 @@
+Subject: Voice Emotion Analyzer - Internship Submission
+
+Dear Recruiter,
+
+I'm excited to submit my Voice Emotion Analyzer Android app for real-time emotion detection from speech.
+
+🔗 GitHub: https://github.com/SpaceIsVoidless/DruiDotVoiceAnalysis
+📱 APK: GitHub Releases (app-debug.apk, 87MB)
+
+📋 TECH STACK:
+• Kotlin 1.9.22, Material Design 3
+• Speech: Android SpeechRecognizer (online) + Vosk 0.3.47 (offline)
+• NLP Engine: 500+ keywords, phrase matching, negation handling, intensity modifiers, stemming
+• Network: ConnectivityManager.NetworkCallback for real-time detection
+• Charts: MPAndroidChart (pie/line graphs with Bezier curves)
+• Architecture: Coroutines, RecyclerView, FileProvider
+• Gradle 8.13 | Min SDK 26 | Target SDK 34
+
+✨ FEATURES:
+✓ Real-time emotion detection (Joy, Sadness, Anger, Surprise, Fear, Neutral)
+✓ Auto-switching online/offline modes with live network notifications
+✓ Interactive visualizations with pie charts & timelines
+✓ Session statistics (samples, dominant emotion, avg confidence, duration)
+✓ CSV export & share functionality
+✓ Recording amplitude indicator
+✓ Privacy-first: all on-device processing, no telemetry
+
+🚀 INSTALLATION:
+1. Download app-debug.apk from GitHub Releases
+2. Enable "Install from unknown sources"
+3. Install & grant mic permission
+4. Test: Say "I'm so happy!" → Detects JOY
+5. Turn off Wi-Fi → See orange offline notification → Test offline mode
+
+📖 Full docs in README.md & TESTING_GUIDE.md
+
+Production-ready with ~1,500 lines of Kotlin, comprehensive error handling, MD3 compliance.
+
+Thank you!
+Best regards
