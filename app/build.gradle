@@ -20,6 +20,28 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
         }
+        debug {
+            // Enable 16KB page alignment for Android 15+
+            packaging {
+                jniLibs {
+                    useLegacyPackaging = false
+                }
+            }
+        }
+        all {
+            // Enable 16KB page alignment for all build types
+            packaging {
+                jniLibs {
+                    useLegacyPackaging = false
+                }
+            }
+        }
+    }
+
+    packaging {
+        jniLibs {
+            useLegacyPackaging = false
+        }
     }
 
     buildFeatures {
@@ -37,9 +59,8 @@ android {
 }
 
 dependencies {
-    implementation platform("com.google.firebase:firebase-bom:33.5.1")
-    implementation "com.google.firebase:firebase-analytics-ktx"
-    implementation "com.google.firebase:firebase-config-ktx"
+    // Firebase removed - not needed for core functionality
+    // To re-enable: add google-services.json and uncomment Firebase dependencies
 
     // Charts
     implementation "com.github.PhilJay:MPAndroidChart:v3.1.0"
@@ -67,8 +88,4 @@ dependencies {
     implementation "androidx.recyclerview:recyclerview:1.3.2"
     implementation "androidx.activity:activity-ktx:1.9.2"
     implementation "androidx.coordinatorlayout:coordinatorlayout:1.2.0"
-}
-
-if (file("google-services.json").exists()) {
-    apply plugin: "com.google.gms.google-services"
 }

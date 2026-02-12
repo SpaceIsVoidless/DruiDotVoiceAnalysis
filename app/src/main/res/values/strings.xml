@@ -8,8 +8,8 @@
     <string name="permission_denied">Microphone permission denied</string>
     <string name="export_failed">Export failed</string>
     <string name="status_ready">Ready to analyze</string>
-    <string name="status_recording">Recording...</string>
-    <string name="status_analyzing">Analyzing...</string>
+    <string name="status_recording">Recording…</string>
+    <string name="status_analyzing">Analyzing…</string>
     <string name="mode_online">Online</string>
     <string name="mode_offline">Offline</string>
     <string name="emotion_distribution">Emotion Distribution</string>
@@ -21,4 +21,27 @@
     <string name="start_recording">Start Recording</string>
     <string name="stop_recording">Stop Recording</string>
     <string name="no_data">No data yet. Tap record to start analyzing.</string>
+
+    <!-- Session stats -->
+    <string name="session_stats">Session Statistics</string>
+    <string name="total_samples">Samples</string>
+    <string name="dominant_emotion">Dominant</string>
+    <string name="avg_confidence">Avg. Confidence</string>
+    <string name="session_duration">Duration</string>
+
+    <!-- Menu -->
+    <string name="action_reset">Reset Session</string>
+    <string name="action_export_csv">Export CSV</string>
+
+    <!-- Amplitude -->
+    <string name="amplitude_label">Input Level</string>
+
+    <!-- Vosk -->
+    <string name="vosk_loading">Loading offline model…</string>
+    <string name="vosk_ready">Offline mode ready</string>
+    <string name="vosk_failed">Offline model unavailable</string>
+
+    <!-- Network status changes -->
+    <string name="network_online">Back online</string>
+    <string name="network_offline">You\'re offline</string>
 </resources>

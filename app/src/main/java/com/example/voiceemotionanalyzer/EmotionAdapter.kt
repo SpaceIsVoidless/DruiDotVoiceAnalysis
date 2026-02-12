@@ -51,8 +51,8 @@ class EmotionAdapter : ListAdapter<EmotionPoint, EmotionAdapter.EmotionViewHolde
             }
             binding.emotionIndicator.background = indicatorDrawable
             
-            // Transcript text (if available in layout)
-            binding.transcriptText?.text = item.text.ifBlank { "—" }
+            // Transcript text
+            binding.transcriptText.text = item.text.ifBlank { "—" }
             
             // Confidence score
             val confidencePercent = (item.confidence * 100).toInt()

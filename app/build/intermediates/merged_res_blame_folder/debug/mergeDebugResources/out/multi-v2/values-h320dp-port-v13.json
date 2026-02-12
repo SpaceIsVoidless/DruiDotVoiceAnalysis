@@ -1,10 +1,10 @@
 {
     "logs": [
         {
-            "outputFile": "com.example.voiceemotionanalyzer.app-mergeDebugResources-42:/values-h320dp-port-v13/values-h320dp-port-v13.xml",
+            "outputFile": "com.example.voiceemotionanalyzer.app-mergeDebugResources-36:/values-h320dp-port-v13/values-h320dp-port-v13.xml",
             "map": [
                 {
-                    "source": "C:\\Users\\Admin\\.gradle\\caches\\8.13\\transforms\\bcf33680be2af97436ed910440dd6446\\transformed\\material-1.12.0\\res\\values-h320dp-port-v13\\values-h320dp-port-v13.xml",
+                    "source": "C:\\Users\\Admin\\.gradle\\caches\\8.13\\transforms\\f99976073c5056f4b43f85f1a3e683b8\\transformed\\material-1.12.0\\res\\values-h320dp-port-v13\\values-h320dp-port-v13.xml",
                     "from": {
                         "startLines": "2",
                         "startColumns": "4",

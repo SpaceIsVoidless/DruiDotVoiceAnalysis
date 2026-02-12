@@ -4,12 +4,14 @@ import android.Manifest
 import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.Color
+import android.net.ConnectivityManager
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.speech.RecognitionListener
 import android.speech.RecognizerIntent
 import android.speech.SpeechRecognizer
+import android.view.View
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
@@ -17,8 +19,12 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.voiceemotionanalyzer.databinding.ActivityMainBinding
-import com.github.mikephil.charting.charts.PieChart
 import com.github.mikephil.charting.components.XAxis
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.cancel
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
@@ -26,8 +32,8 @@ import com.github.mikephil.charting.data.PieData
 import com.github.mikephil.charting.data.PieDataSet
 import com.github.mikephil.charting.data.PieEntry
 import com.github.mikephil.charting.formatter.ValueFormatter
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
-import com.google.firebase.analytics.FirebaseAnalytics
 import org.json.JSONArray
 import org.json.JSONObject
 import java.io.File
@@ -46,8 +52,12 @@ class MainActivity : AppCompatActivity(), RecognitionListener {
     private var sessionStartMs = 0L
     private lateinit var speechRecognizer: SpeechRecognizer
     private lateinit var recognizerIntent: Intent
-    private var analytics: FirebaseAnalytics? = null
     private lateinit var analyzer: EmotionAnalyzer
+    private var voskRecognizer: VoskRecognizer? = null
+    private var isOnline = false
+    private var useVosk = false
+    private val coroutineScope = CoroutineScope(Dispatchers.Main + Job())
+    private var networkCallback: ConnectivityManager.NetworkCallback? = null
 
     // Accumulated emotion counts for pie chart
     private val emotionCounts = mutableMapOf(
@@ -58,6 +68,16 @@ class MainActivity : AppCompatActivity(), RecognitionListener {
         "surprise" to 0,
         "neutral" to 0
     )
+
+    // Session duration timer
+    private val durationRunnable = object : Runnable {
+        override fun run() {
+            if (isRecording) {
+                updateSessionDuration()
+                handler.postDelayed(this, 1000)
+            }
+        }
+    }
 
     private val processRunnable = object : Runnable {
         override fun run() {
@@ -84,15 +104,21 @@ class MainActivity : AppCompatActivity(), RecognitionListener {
         setContentView(binding.root)
         setSupportActionBar(binding.topAppBar)
 
-        // Initialize Firebase Analytics (optional)
-        try {
-            analytics = FirebaseAnalytics.getInstance(this)
-        } catch (e: Exception) {
-            // Firebase not configured, continue without it
-        }
-
-        // Initialize emotion analyzer (no Firebase dependency)
+        // Initialize emotion analyzer
         analyzer = EmotionAnalyzer()
+        
+        // Initialize Vosk for offline mode
+        voskRecognizer = VoskRecognizer(this)
+        coroutineScope.launch(Dispatchers.IO) {
+            val voskReady = voskRecognizer?.initialize() ?: false
+            launch(Dispatchers.Main) {
+                if (voskReady) {
+                    Toast.makeText(this@MainActivity, "Offline mode ready", Toast.LENGTH_SHORT).show()
+                }
+                // Re-evaluate speech recognizer setup now that Vosk may be ready
+                setupSpeechRecognizer()
+            }
+        }
 
         // Setup RecyclerView
         binding.emotionRecycler.layoutManager = LinearLayoutManager(this)
@@ -103,7 +129,8 @@ class MainActivity : AppCompatActivity(), RecognitionListener {
         setupLineChart()
 
         // Setup status card
-        updateStatusCard(isOnline = true, isRecording = false)
+        isOnline = NetworkUtil.isNetworkAvailable(this)
+        updateStatusCard(isOnline = isOnline, isRecording = false)
 
         // Setup FAB
         binding.recordFab.setOnClickListener {
@@ -112,6 +139,37 @@ class MainActivity : AppCompatActivity(), RecognitionListener {
 
         // Setup speech recognizer
         setupSpeechRecognizer()
+
+        // Register real-time network listener
+        networkCallback = NetworkUtil.registerNetworkCallback(
+            this,
+            onAvailable = {
+                runOnUiThread {
+                    if (!isOnline) {
+                        isOnline = true
+                        updateStatusCard(isOnline = true, isRecording = isRecording)
+                        Snackbar.make(binding.rootLayout, R.string.network_online, Snackbar.LENGTH_SHORT)
+                            .setBackgroundTint(ContextCompat.getColor(this, R.color.status_online))
+                            .setTextColor(Color.WHITE)
+                            .show()
+                        if (!isRecording) setupSpeechRecognizer()
+                    }
+                }
+            },
+            onLost = {
+                runOnUiThread {
+                    if (isOnline) {
+                        isOnline = false
+                        updateStatusCard(isOnline = false, isRecording = isRecording)
+                        Snackbar.make(binding.rootLayout, R.string.network_offline, Snackbar.LENGTH_SHORT)
+                            .setBackgroundTint(ContextCompat.getColor(this, R.color.status_offline))
+                            .setTextColor(Color.WHITE)
+                            .show()
+                        if (!isRecording) setupSpeechRecognizer()
+                    }
+                }
+            }
+        )
     }
 
     override fun onCreateOptionsMenu(menu: android.view.Menu): Boolean {
@@ -125,24 +183,41 @@ class MainActivity : AppCompatActivity(), RecognitionListener {
                 exportAndShare()
                 true
             }
+            R.id.action_export_csv -> {
+                exportCsv()
+                true
+            }
+            R.id.action_reset -> {
+                confirmResetSession()
+                true
+            }
             else -> super.onOptionsItemSelected(item)
         }
     }
 
     private fun setupSpeechRecognizer() {
-        if (!SpeechRecognizer.isRecognitionAvailable(this)) {
+        isOnline = NetworkUtil.isNetworkAvailable(this)
+        
+        // Determine which recognizer to use
+        useVosk = !isOnline && voskRecognizer?.isInitialized == true
+        
+        if (useVosk) {
+            // Use Vosk for offline recognition
+            Toast.makeText(this, "Using offline mode", Toast.LENGTH_SHORT).show()
+        } else if (SpeechRecognizer.isRecognitionAvailable(this)) {
+            // Use Android SpeechRecognizer for online
+            speechRecognizer = SpeechRecognizer.createSpeechRecognizer(this)
+            speechRecognizer.setRecognitionListener(this)
+            recognizerIntent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
+                putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
+                putExtra(RecognizerIntent.EXTRA_PARTIAL_RESULTS, true)
+                putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault())
+                putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 1)
+            }
+        } else {
             Toast.makeText(this, R.string.no_mic, Toast.LENGTH_LONG).show()
             binding.recordFab.isEnabled = false
             updateStatusCard(isOnline = false, isRecording = false)
-            return
-        }
-        speechRecognizer = SpeechRecognizer.createSpeechRecognizer(this)
-        speechRecognizer.setRecognitionListener(this)
-        recognizerIntent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
-            putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
-            putExtra(RecognizerIntent.EXTRA_PARTIAL_RESULTS, true)
-            putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault())
-            putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 1)
         }
     }
 
@@ -155,7 +230,6 @@ class MainActivity : AppCompatActivity(), RecognitionListener {
     }
 
     private fun startRecording() {
-        if (!::speechRecognizer.isInitialized) return
         isRecording = true
         sessionStartMs = System.currentTimeMillis()
 
@@ -164,11 +238,43 @@ class MainActivity : AppCompatActivity(), RecognitionListener {
         binding.recordFab.setIconResource(R.drawable.ic_stop)
 
         // Update status card
-        updateStatusCard(isOnline = true, isRecording = true)
+        updateStatusCard(isOnline = isOnline, isRecording = true)
 
-        analytics?.logEvent("recording_session_start", null)
-        speechRecognizer.startListening(recognizerIntent)
+        // Show amplitude bar
+        binding.amplitudeContainer.visibility = View.VISIBLE
+        binding.amplitudeBar.progress = 0
+        
+        if (useVosk && voskRecognizer != null) {
+            // Start Vosk offline recognition
+            voskRecognizer?.startListening(object : VoskRecognizer.VoskListener {
+                override fun onResult(text: String) {
+                    runOnUiThread {
+                        if (text.isNotBlank()) {
+                            // Accumulate final results for richer analysis
+                            if (bufferText.isNotEmpty()) bufferText.append(" ")
+                            bufferText.append(text)
+                            processBuffer()
+                        }
+                    }
+                }
+                
+                override fun onPartialResult(text: String) {
+                    // Partial results are transient — don't clear buffer
+                }
+                
+                override fun onError(error: String) {
+                    runOnUiThread {
+                        Snackbar.make(binding.rootLayout, "Offline recognition error: $error", Snackbar.LENGTH_SHORT).show()
+                    }
+                }
+            })
+        } else if (::speechRecognizer.isInitialized) {
+            // Start online recognition
+            speechRecognizer.startListening(recognizerIntent)
+        }
+        
         handler.postDelayed(processRunnable, 4000)
+        handler.postDelayed(durationRunnable, 1000)
     }
 
     private fun stopRecording() {
@@ -179,11 +285,20 @@ class MainActivity : AppCompatActivity(), RecognitionListener {
         binding.recordFab.setIconResource(R.drawable.ic_mic)
 
         // Update status card
-        updateStatusCard(isOnline = true, isRecording = false)
+        updateStatusCard(isOnline = isOnline, isRecording = false)
+
+        // Hide amplitude bar
+        binding.amplitudeContainer.visibility = View.GONE
 
         handler.removeCallbacks(processRunnable)
+        handler.removeCallbacks(durationRunnable)
         bufferText.clear()
-        speechRecognizer.stopListening()
+        
+        if (useVosk) {
+            voskRecognizer?.stopListening()
+        } else if (::speechRecognizer.isInitialized) {
+            speechRecognizer.stopListening()
+        }
     }
 
     private fun updateStatusCard(isOnline: Boolean, isRecording: Boolean) {
@@ -194,19 +309,19 @@ class MainActivity : AppCompatActivity(), RecognitionListener {
 
         when {
             isRecording -> {
-                statusIndicatorColor = ContextCompat.getColor(this, R.color.emotion_anger)
+                statusIndicatorColor = ContextCompat.getColor(this, R.color.status_recording)
                 statusTextStr = getString(R.string.status_recording)
-                modeTextStr = getString(R.string.mode_online)
-                modeTextColor = ContextCompat.getColor(this, R.color.status_online)
+                modeTextStr = if (useVosk) getString(R.string.mode_offline) else getString(R.string.mode_online)
+                modeTextColor = if (useVosk) ContextCompat.getColor(this, R.color.status_offline) else ContextCompat.getColor(this, R.color.status_online)
             }
             isOnline -> {
-                statusIndicatorColor = ContextCompat.getColor(this, R.color.emotion_joy)
+                statusIndicatorColor = ContextCompat.getColor(this, R.color.status_online)
                 statusTextStr = getString(R.string.status_ready)
                 modeTextStr = getString(R.string.mode_online)
                 modeTextColor = ContextCompat.getColor(this, R.color.status_online)
             }
             else -> {
-                statusIndicatorColor = ContextCompat.getColor(this, R.color.emotion_neutral)
+                statusIndicatorColor = ContextCompat.getColor(this, R.color.status_offline)
                 statusTextStr = getString(R.string.status_ready)
                 modeTextStr = getString(R.string.mode_offline)
                 modeTextColor = ContextCompat.getColor(this, R.color.text_secondary)
@@ -219,19 +334,34 @@ class MainActivity : AppCompatActivity(), RecognitionListener {
         binding.modeText.setTextColor(modeTextColor)
     }
 
+    private fun updateSessionDuration() {
+        if (sessionStartMs == 0L) return
+        val elapsed = (System.currentTimeMillis() - sessionStartMs) / 1000
+        val minutes = elapsed / 60
+        val seconds = elapsed % 60
+        binding.statDurationValue.text = String.format("%d:%02d", minutes, seconds)
+    }
+
     private fun processBuffer() {
         val text = bufferText.toString().trim()
         if (text.isBlank()) return
-        val confidenceThreshold = 0.3f
-        if (lastConfidence < confidenceThreshold) {
-            Snackbar.make(binding.rootLayout, R.string.low_confidence, Snackbar.LENGTH_SHORT).show()
-            bufferText.clear()
-            return
+        
+        // Skip confidence check for Vosk (it doesn't provide confidence)
+        if (!useVosk) {
+            val confidenceThreshold = 0.3f
+            if (lastConfidence < confidenceThreshold) {
+                Snackbar.make(binding.rootLayout, R.string.low_confidence, Snackbar.LENGTH_SHORT).show()
+                bufferText.clear()
+                return
+            }
         }
-        val point = analyzer.analyze(text, System.currentTimeMillis())
+        
+        val currentTime = System.currentTimeMillis()
+        
+        // Analyze emotion from text
+        val point = analyzer.analyze(text, currentTime)
         bufferText.clear()
         addEmotionPoint(point)
-        analytics?.logEvent("chunk_analyzed", null)
     }
 
     private fun addEmotionPoint(point: EmotionPoint) {
@@ -246,7 +376,111 @@ class MainActivity : AppCompatActivity(), RecognitionListener {
         updatePieChart()
         updateLineChart()
         updateCurrentEmotionCard(point)
+        updateSessionStats()
     }
+
+    // ---------- Session Stats ----------
+
+    private fun updateSessionStats() {
+        if (emotionPoints.isEmpty()) {
+            binding.statsCard.visibility = View.GONE
+            return
+        }
+        binding.statsCard.visibility = View.VISIBLE
+
+        // Total samples
+        binding.statSamplesValue.text = emotionPoints.size.toString()
+
+        // Dominant emotion
+        val dominant = emotionCounts.maxByOrNull { it.value }
+        if (dominant != null && dominant.value > 0) {
+            val name = dominant.key.replaceFirstChar { it.uppercase() }
+            binding.statDominantValue.text = name
+            binding.statDominantValue.setTextColor(getEmotionColor(dominant.key))
+        }
+
+        // Average confidence
+        val avgConf = emotionPoints.map { it.confidence }.average()
+        binding.statConfidenceValue.text = "${(avgConf * 100).toInt()}%"
+
+        // Duration
+        updateSessionDuration()
+    }
+
+    // ---------- Reset Session ----------
+
+    private fun confirmResetSession() {
+        MaterialAlertDialogBuilder(this)
+            .setTitle("Reset Session")
+            .setMessage("Clear all recorded data and start fresh?")
+            .setPositiveButton("Reset") { _, _ -> resetSession() }
+            .setNegativeButton("Cancel", null)
+            .show()
+    }
+
+    private fun resetSession() {
+        emotionPoints.clear()
+        adapter.submitList(emptyList())
+        emotionCounts.replaceAll { _, _ -> 0 }
+        sessionStartMs = 0L
+
+        // Reset charts
+        binding.emotionPieChart.data = null
+        binding.emotionPieChart.invalidate()
+        binding.emotionChart.data = null
+        binding.emotionChart.invalidate()
+
+        // Reset current emotion card
+        binding.currentEmotionText.text = "—"
+        binding.currentEmotionText.setTextColor(ContextCompat.getColor(this, R.color.emotion_joy))
+        binding.currentEmotionCard.setCardBackgroundColor(ContextCompat.getColor(this, R.color.emotion_joy_light))
+        binding.confidenceText.text = getString(R.string.confidence_placeholder)
+
+        // Hide stats
+        binding.statsCard.visibility = View.GONE
+
+        Snackbar.make(binding.rootLayout, "Session reset", Snackbar.LENGTH_SHORT).show()
+    }
+
+    // ---------- CSV Export ----------
+
+    private fun exportCsv() {
+        if (emotionPoints.isEmpty()) {
+            Snackbar.make(binding.rootLayout, "No data to export", Snackbar.LENGTH_SHORT).show()
+            return
+        }
+
+        try {
+            val sb = StringBuilder()
+            sb.appendLine("timestamp,time_formatted,emotion,score,confidence,text")
+            val formatter = java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+            emotionPoints.asReversed().forEach { p ->
+                val time = formatter.format(java.util.Date(p.timeMs))
+                val escapedText = p.text.replace("\"", "\"\"")
+                sb.appendLine("${p.timeMs},\"$time\",${p.emotion},${p.score},${p.confidence},\"$escapedText\"")
+            }
+
+            val csvFile = File(cacheDir, "emotion_data_${System.currentTimeMillis()}.csv")
+            csvFile.writeText(sb.toString())
+
+            val uri = FileProvider.getUriForFile(
+                this,
+                "${BuildConfig.APPLICATION_ID}.fileprovider",
+                csvFile
+            )
+
+            val shareIntent = Intent(Intent.ACTION_SEND).apply {
+                type = "text/csv"
+                putExtra(Intent.EXTRA_STREAM, uri)
+                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            }
+            startActivity(Intent.createChooser(shareIntent, "Export CSV"))
+        } catch (e: Exception) {
+            Snackbar.make(binding.rootLayout, R.string.export_failed, Snackbar.LENGTH_LONG).show()
+        }
+    }
+
+    // ---------- Charts ----------
 
     private fun setupPieChart() {
         binding.emotionPieChart.apply {
@@ -258,7 +492,10 @@ class MainActivity : AppCompatActivity(), RecognitionListener {
             setTransparentCircleColor(Color.WHITE)
             setTransparentCircleAlpha(110)
             setDrawEntryLabels(false)
-            legend.isEnabled = false
+            legend.isEnabled = true
+            legend.textColor = ContextCompat.getColor(this@MainActivity, R.color.text_secondary)
+            legend.textSize = 11f
+            legend.isWordWrapEnabled = true
             setNoDataText(getString(R.string.no_data))
             setNoDataTextColor(ContextCompat.getColor(this@MainActivity, R.color.text_secondary))
             animateY(800)
@@ -283,9 +520,9 @@ class MainActivity : AppCompatActivity(), RecognitionListener {
             return
         }
 
-        val dataSet = PieDataSet(entries, "Emotions").apply {
+        val dataSet = PieDataSet(entries, "").apply {
             setColors(colors)
-            sliceSpace = 2f
+            sliceSpace = 3f
             valueTextSize = 12f
             valueTextColor = Color.WHITE
             valueFormatter = object : ValueFormatter() {
@@ -342,7 +579,7 @@ class MainActivity : AppCompatActivity(), RecognitionListener {
         }
 
         val dataSet = LineDataSet(entries, "Emotion").apply {
-            lineWidth = 2f
+            lineWidth = 2.5f
             setDrawValues(false)
             setDrawCircles(true)
             circleRadius = 5f
@@ -352,7 +589,7 @@ class MainActivity : AppCompatActivity(), RecognitionListener {
             setCircleColors(colors)
             setDrawFilled(true)
             fillColor = ContextCompat.getColor(this@MainActivity, R.color.md_theme_light_primary)
-            fillAlpha = 30
+            fillAlpha = 25
         }
 
         binding.emotionChart.data = LineData(dataSet)
@@ -372,7 +609,7 @@ class MainActivity : AppCompatActivity(), RecognitionListener {
         binding.currentEmotionText.setTextColor(emotionColor)
 
         // Update confidence text
-        val confidence = point.confidence ?: 0.5f
+        val confidence = point.confidence
         val confidencePercent = (confidence * 100).toInt()
         binding.confidenceText.text = getString(R.string.confidence_label) + " $confidencePercent%"
     }
@@ -402,6 +639,11 @@ class MainActivity : AppCompatActivity(), RecognitionListener {
     }
 
     private fun exportAndShare() {
+        if (emotionPoints.isEmpty()) {
+            Snackbar.make(binding.rootLayout, "No data to export", Snackbar.LENGTH_SHORT).show()
+            return
+        }
+
         try {
             // Export line chart
             val chartBitmap = binding.emotionChart.chartBitmap
@@ -425,11 +667,11 @@ class MainActivity : AppCompatActivity(), RecognitionListener {
                 obj.put("emotion", point.emotion)
                 obj.put("score", point.score)
                 obj.put("text", point.text)
-                obj.put("confidence", point.confidence ?: 0.5f)
+                obj.put("confidence", point.confidence)
                 jsonArray.put(obj)
             }
             val jsonFile = File(cacheDir, "emotion_data_${System.currentTimeMillis()}.json")
-            jsonFile.writeText(jsonArray.toString())
+            jsonFile.writeText(jsonArray.toString(2))
 
             val chartUri = FileProvider.getUriForFile(
                 this,
@@ -461,20 +703,27 @@ class MainActivity : AppCompatActivity(), RecognitionListener {
         }
     }
 
-    // RecognitionListener implementations
+    // ---------- RecognitionListener ----------
+
     override fun onReadyForSpeech(params: Bundle?) = Unit
 
     override fun onBeginningOfSpeech() = Unit
 
-    override fun onRmsChanged(rmsdB: Float) = Unit
+    override fun onRmsChanged(rmsdB: Float) {
+        // Update amplitude bar (rms is typically -2 to 10 dB)
+        val normalized = ((rmsdB + 2f) / 12f * 100f).toInt().coerceIn(0, 100)
+        binding.amplitudeBar.setProgressCompat(normalized, true)
+    }
 
     override fun onBufferReceived(buffer: ByteArray?) = Unit
 
     override fun onEndOfSpeech() = Unit
 
     override fun onError(error: Int) {
-        if (isRecording) {
-            handler.postDelayed({ speechRecognizer.startListening(recognizerIntent) }, 600)
+        if (isRecording && ::speechRecognizer.isInitialized) {
+            handler.postDelayed({ 
+                if (isRecording) speechRecognizer.startListening(recognizerIntent) 
+            }, 600)
         }
     }
 
@@ -489,7 +738,7 @@ class MainActivity : AppCompatActivity(), RecognitionListener {
             updateConfidence(results)
             processBuffer()
         }
-        if (isRecording) {
+        if (isRecording && ::speechRecognizer.isInitialized) {
             speechRecognizer.startListening(recognizerIntent)
         }
     }
@@ -517,9 +766,13 @@ class MainActivity : AppCompatActivity(), RecognitionListener {
 
     override fun onDestroy() {
         handler.removeCallbacks(processRunnable)
+        handler.removeCallbacks(durationRunnable)
+        NetworkUtil.unregisterNetworkCallback(this, networkCallback)
         if (::speechRecognizer.isInitialized) {
             speechRecognizer.destroy()
         }
+        voskRecognizer?.destroy()
+        coroutineScope.cancel()
         super.onDestroy()
     }
 }
