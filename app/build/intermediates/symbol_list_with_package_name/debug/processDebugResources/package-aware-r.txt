@@ -3096,6 +3096,8 @@ drawable ic_call_decline
 drawable ic_call_decline_low
 drawable ic_clear_black_24
 drawable ic_clock_black_24dp
+drawable ic_history
+drawable ic_keyboard
 drawable ic_keyboard_black_24dp
 drawable ic_launcher_background
 drawable ic_launcher_foreground
@@ -3258,6 +3260,7 @@ id action_mode_bar
 id action_mode_bar_stub
 id action_mode_close_button
 id action_reset
+id action_session_history
 id action_share
 id action_text
 id actions
@@ -3666,6 +3669,7 @@ id tag_window_insets_animation_callback
 id text
 id text2
 id textEnd
+id textInputFab
 id textSpacerNoButtons
 id textSpacerNoTitle
 id textStart
@@ -3955,6 +3959,7 @@ string abc_toolbar_collapse_description
 string action_demo_mode
 string action_export_csv
 string action_reset
+string action_session_history
 string amplitude_label
 string androidx_startup
 string app_name
@@ -4035,6 +4040,7 @@ string material_timepicker_select_time
 string material_timepicker_text_input_mode_description
 string mode_offline
 string mode_online
+string mode_text
 string mtrl_badge_numberless_content_description
 string mtrl_checkbox_button_icon_path_checked
 string mtrl_checkbox_button_icon_path_group_name
@@ -4101,6 +4107,7 @@ string network_offline
 string network_online
 string no_data
 string no_mic
+string no_sessions
 string password_toggle_content_description
 string path_password_eye
 string path_password_eye_mask_strike_through
@@ -4114,6 +4121,8 @@ string searchbar_scrolling_view_behavior
 string searchview_clear_text_content_description
 string searchview_navigation_content_description
 string session_duration
+string session_history_title
+string session_saved
 string session_stats
 string share_export
 string side_sheet_accessibility_pane_title
@@ -4124,6 +4133,10 @@ string status_bar_notification_info_overflow
 string status_ready
 string status_recording
 string stop_recording
+string text_mode_analyze
+string text_mode_hint
+string text_mode_label
+string text_mode_title
 string total_samples
 string vosk_failed
 string vosk_loading

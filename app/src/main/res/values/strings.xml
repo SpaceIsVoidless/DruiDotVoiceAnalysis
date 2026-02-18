@@ -48,4 +48,17 @@
     <!-- Demo Mode -->
     <string name="action_demo_mode">Demo Mode</string>
     <string name="demo_mode_title">Select a Demo Phrase</string>
+
+    <!-- Text Input Mode -->
+    <string name="text_mode_label">Text Input Mode</string>
+    <string name="text_mode_title">Analyze Text Emotion</string>
+    <string name="text_mode_hint">Type or paste text to analyze emotions…</string>
+    <string name="text_mode_analyze">Analyze</string>
+    <string name="mode_text">Text Mode</string>
+
+    <!-- Session History -->
+    <string name="action_session_history">Session History</string>
+    <string name="session_history_title">Past Sessions</string>
+    <string name="session_saved">Session saved</string>
+    <string name="no_sessions">No saved sessions yet</string>
 </resources>

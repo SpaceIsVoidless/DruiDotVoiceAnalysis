@@ -19,6 +19,7 @@ import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.progressindicator.LinearProgressIndicator;
 import java.lang.NullPointerException;
 import java.lang.Override;
@@ -92,6 +93,9 @@ public final class ActivityMainBinding implements ViewBinding {
   public final MaterialCardView summaryCard;
 
   @NonNull
+  public final FloatingActionButton textInputFab;
+
+  @NonNull
   public final MaterialCardView timelineCard;
 
   @NonNull
@@ -108,8 +112,8 @@ public final class ActivityMainBinding implements ViewBinding {
       @NonNull TextView statDurationValue, @NonNull TextView statSamplesValue,
       @NonNull MaterialCardView statsCard, @NonNull MaterialCardView statusCard,
       @NonNull View statusIndicator, @NonNull TextView statusText,
-      @NonNull MaterialCardView summaryCard, @NonNull MaterialCardView timelineCard,
-      @NonNull MaterialToolbar topAppBar) {
+      @NonNull MaterialCardView summaryCard, @NonNull FloatingActionButton textInputFab,
+      @NonNull MaterialCardView timelineCard, @NonNull MaterialToolbar topAppBar) {
     this.rootView = rootView;
     this.amplitudeBar = amplitudeBar;
     this.amplitudeContainer = amplitudeContainer;
@@ -132,6 +136,7 @@ public final class ActivityMainBinding implements ViewBinding {
     this.statusIndicator = statusIndicator;
     this.statusText = statusText;
     this.summaryCard = summaryCard;
+    this.textInputFab = textInputFab;
     this.timelineCard = timelineCard;
     this.topAppBar = topAppBar;
   }
@@ -285,6 +290,12 @@ public final class ActivityMainBinding implements ViewBinding {
         break missingId;
       }
 
+      id = R.id.textInputFab;
+      FloatingActionButton textInputFab = ViewBindings.findChildViewById(rootView, id);
+      if (textInputFab == null) {
+        break missingId;
+      }
+
       id = R.id.timelineCard;
       MaterialCardView timelineCard = ViewBindings.findChildViewById(rootView, id);
       if (timelineCard == null) {
@@ -301,7 +312,7 @@ public final class ActivityMainBinding implements ViewBinding {
           appBarLayout, confidenceText, currentEmotionCard, currentEmotionText, emotionChart,
           emotionPieChart, emotionRecycler, modeText, recordFab, rootLayout, statConfidenceValue,
           statDominantValue, statDurationValue, statSamplesValue, statsCard, statusCard,
-          statusIndicator, statusText, summaryCard, timelineCard, topAppBar);
+          statusIndicator, statusText, summaryCard, textInputFab, timelineCard, topAppBar);
     }
     String missingId = rootView.getResources().getResourceName(id);
     throw new NullPointerException("Missing required view with ID: ".concat(missingId));

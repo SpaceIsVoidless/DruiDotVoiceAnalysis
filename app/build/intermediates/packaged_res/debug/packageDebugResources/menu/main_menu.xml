@@ -10,6 +10,10 @@
         android:title="@string/action_demo_mode"
         app:showAsAction="never" />
     <item
+        android:id="@+id/action_session_history"
+        android:title="@string/action_session_history"
+        app:showAsAction="never" />
+    <item
         android:id="@+id/action_export_csv"
         android:title="@string/action_export_csv"
         app:showAsAction="never" />

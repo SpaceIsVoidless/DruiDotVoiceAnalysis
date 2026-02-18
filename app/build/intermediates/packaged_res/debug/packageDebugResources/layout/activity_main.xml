@@ -396,6 +396,19 @@
 
     </androidx.core.widget.NestedScrollView>
 
+    <!-- Text Input FAB (left of mic) -->
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/textInputFab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|start"
+        android:layout_marginStart="24dp"
+        android:layout_marginBottom="32dp"
+        android:contentDescription="@string/text_mode_label"
+        app:backgroundTint="@color/md_theme_light_tertiary"
+        app:srcCompat="@drawable/ic_keyboard"
+        app:fabSize="normal" />
+
     <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
         android:id="@+id/recordFab"
         android:layout_width="wrap_content"

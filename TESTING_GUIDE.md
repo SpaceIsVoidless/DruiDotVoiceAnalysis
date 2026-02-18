@@ -18,13 +18,28 @@ This Android application analyzes emotions in real-time from your speech using:
 - Short-text optimization for brief speech inputs
 - Detects: Joy, Sadness, Anger, Surprise, Fear, Neutral
 
-### **3. Real-Time Network Detection** ✅
+### **3. Text Input Mode** ✅
+- **Keyboard icon** (purple FAB, bottom-left): Opens a text input dialog
+- Type or paste any text and tap **"Analyze"** to detect emotions instantly
+- Works identically to voice input — same NLP engine, same charts, same statistics
+- Great for Bluestacks or emulators without microphone support
+- Snackbar feedback shows detected emotion + confidence with color coding
+
+### **4. Local Session Storage** ✅
+- Sessions auto-save when you reset or close the app
+- View past sessions via **⋮ menu → "Session History"**
+- Each session shows: date, sample count, dominant emotion, confidence, duration
+- Tap a session for detailed emotion distribution breakdown
+- Stores up to 20 sessions locally (no cloud/account needed)
+- Clear all sessions with one tap
+
+### **5. Real-Time Network Detection** ✅
 - Live connectivity monitoring with colored Snackbar notifications
 - Green Snackbar: "Back online" when internet restored
 - Orange Snackbar: "You're offline" when connection lost
 - Status card updates automatically
 
-### **4. Beautiful Material Design 3 UI** ✅
+### **6. Beautiful Material Design 3 UI** ✅
 - Interactive pie chart showing emotion distribution
 - Timeline graph with emotion progression
 - Session statistics (sample count, dominant emotion, avg confidence, duration)
@@ -205,6 +220,35 @@ If microphone setup is problematic, the app includes **Demo Mode**:
 > "Bluestacks requires the Google app to be installed from Play Store for speech recognition to work. Once installed, the app works identically to a physical Android device - capturing real microphone input, detecting emotions in real-time, and updating all UI elements. Demo Mode is available as a fallback to demonstrate the emotion analysis engine without microphone setup."
 
 ## 🧪 Testing Scenarios
+
+#### ⌨️ **Test Text Input Mode**
+
+1. **Tap the purple keyboard button** (bottom-left FAB)
+2. **Type or paste** one of these phrases:
+   - "I'm extremely happy and excited!" → Should detect **JOY**
+   - "This makes me really angry and furious" → Should detect **ANGER**
+   - "I feel so sad and lonely" → Should detect **SAD**
+   - "That's incredible and shocking!" → Should detect **SURPRISE**
+   - "I'm terrified and scared" → Should detect **FEAR**
+3. **Tap "Analyze"**
+4. **Verify:**
+   - ✅ Colored Snackbar shows detected emotion + confidence
+   - ✅ Charts update with new data point
+   - ✅ Current Emotion card changes color
+   - ✅ History list shows the analyzed text
+5. **Try multiple inputs** to build a mixed session
+
+#### 📜 **Test Session History**
+
+1. **Analyze several phrases** (voice, text, or demo mode)
+2. **Tap ⋮ menu → "Reset Session"** to save the session
+3. **Repeat** steps 1–2 to create a second session
+4. **Tap ⋮ menu → "Session History"**
+5. **Verify:**
+   - ✅ Sessions listed with date, sample count, dominant emotion, duration
+   - ✅ Tapping a session opens a detailed summary dialog
+   - ✅ "Clear All" button deletes all saved sessions
+6. **Close and reopen the app** → Sessions persist
 
 #### 🟢 **Test Online Mode (With Internet)**
 

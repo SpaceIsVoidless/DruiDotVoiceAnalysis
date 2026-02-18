@@ -4,8 +4,16 @@
         "source": "C:\\Users\\Admin\\.gradle\\daemon\\8.13\\com.example.voiceemotionanalyzer.app-main-40:\\drawable\\ic_share.xml"
     },
     {
+        "merged": "com.example.voiceemotionanalyzer.app-debug-38:/layout_activity_main.xml.flat",
+        "source": "com.example.voiceemotionanalyzer.app-main-40:/layout/activity_main.xml"
+    },
+    {
         "merged": "C:\\Users\\Admin\\.gradle\\daemon\\8.13\\com.example.voiceemotionanalyzer.app-debug-38:\\layout_activity_main.xml.flat",
         "source": "C:\\Users\\Admin\\.gradle\\daemon\\8.13\\com.example.voiceemotionanalyzer.app-main-40:\\layout\\activity_main.xml"
+    },
+    {
+        "merged": "com.example.voiceemotionanalyzer.app-debug-38:/drawable_ic_history.xml.flat",
+        "source": "com.example.voiceemotionanalyzer.app-main-40:/drawable/ic_history.xml"
     },
     {
         "merged": "C:\\Users\\Admin\\.gradle\\daemon\\8.13\\com.example.voiceemotionanalyzer.app-debug-38:\\drawable_status_indicator.xml.flat",
@@ -34,6 +42,10 @@
     {
         "merged": "C:\\Users\\Admin\\.gradle\\daemon\\8.13\\com.example.voiceemotionanalyzer.app-debug-38:\\drawable_ic_stop.xml.flat",
         "source": "C:\\Users\\Admin\\.gradle\\daemon\\8.13\\com.example.voiceemotionanalyzer.app-main-40:\\drawable\\ic_stop.xml"
+    },
+    {
+        "merged": "com.example.voiceemotionanalyzer.app-debug-38:/drawable_ic_keyboard.xml.flat",
+        "source": "com.example.voiceemotionanalyzer.app-main-40:/drawable/ic_keyboard.xml"
     },
     {
         "merged": "C:\\Users\\Admin\\.gradle\\daemon\\8.13\\com.example.voiceemotionanalyzer.app-debug-38:\\drawable_ic_mic.xml.flat",

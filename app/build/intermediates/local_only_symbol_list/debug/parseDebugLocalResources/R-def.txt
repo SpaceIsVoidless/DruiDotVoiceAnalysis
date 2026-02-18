@@ -77,6 +77,8 @@ color text_hint
 color text_primary
 color text_secondary
 drawable emotion_badge_background
+drawable ic_history
+drawable ic_keyboard
 drawable ic_launcher_background
 drawable ic_launcher_foreground
 drawable ic_mic
@@ -86,6 +88,7 @@ drawable status_indicator
 id action_demo_mode
 id action_export_csv
 id action_reset
+id action_session_history
 id action_share
 id amplitudeBar
 id amplitudeContainer
@@ -111,6 +114,7 @@ id statusCard
 id statusIndicator
 id statusText
 id summaryCard
+id textInputFab
 id timeText
 id timelineCard
 id topAppBar
@@ -123,6 +127,7 @@ mipmap ic_launcher_round
 string action_demo_mode
 string action_export_csv
 string action_reset
+string action_session_history
 string amplitude_label
 string app_name
 string avg_confidence
@@ -137,14 +142,18 @@ string export_failed
 string low_confidence
 string mode_offline
 string mode_online
+string mode_text
 string network_offline
 string network_online
 string no_data
 string no_mic
+string no_sessions
 string permission_denied
 string recent_analysis
 string record_toggle
 string session_duration
+string session_history_title
+string session_saved
 string session_stats
 string share_export
 string start_recording
@@ -152,6 +161,10 @@ string status_analyzing
 string status_ready
 string status_recording
 string stop_recording
+string text_mode_analyze
+string text_mode_hint
+string text_mode_label
+string text_mode_title
 string total_samples
 string vosk_failed
 string vosk_loading

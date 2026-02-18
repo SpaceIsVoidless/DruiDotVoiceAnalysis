@@ -79,6 +79,7 @@
     <string name="action_demo_mode">Demo Mode</string>
     <string name="action_export_csv">Export CSV</string>
     <string name="action_reset">Reset Session</string>
+    <string name="action_session_history">Session History</string>
     <string name="amplitude_label">Input Level</string>
     <string name="app_name">Emotion Analyzer</string>
     <string name="avg_confidence">Avg. Confidence</string>
@@ -93,14 +94,18 @@
     <string name="low_confidence">Low confidence, skipping chunk</string>
     <string name="mode_offline">Offline</string>
     <string name="mode_online">Online</string>
+    <string name="mode_text">Text Mode</string>
     <string name="network_offline">You\'re offline</string>
     <string name="network_online">Back online</string>
     <string name="no_data">No data yet. Tap record to start analyzing.</string>
     <string name="no_mic">Speech recognition not available on this device</string>
+    <string name="no_sessions">No saved sessions yet</string>
     <string name="permission_denied">Microphone permission denied</string>
     <string name="recent_analysis">Recent Analysis</string>
     <string name="record_toggle">Toggle recording</string>
     <string name="session_duration">Duration</string>
+    <string name="session_history_title">Past Sessions</string>
+    <string name="session_saved">Session saved</string>
     <string name="session_stats">Session Statistics</string>
     <string name="share_export">Share export</string>
     <string name="start_recording">Start Recording</string>
@@ -108,6 +113,10 @@
     <string name="status_ready">Ready to analyze</string>
     <string name="status_recording">Recording…</string>
     <string name="stop_recording">Stop Recording</string>
+    <string name="text_mode_analyze">Analyze</string>
+    <string name="text_mode_hint">Type or paste text to analyze emotions…</string>
+    <string name="text_mode_label">Text Input Mode</string>
+    <string name="text_mode_title">Analyze Text Emotion</string>
     <string name="total_samples">Samples</string>
     <string name="vosk_failed">Offline model unavailable</string>
     <string name="vosk_loading">Loading offline model…</string>

@@ -13,6 +13,7 @@ import android.speech.RecognizerIntent
 import android.speech.SpeechRecognizer
 import android.speech.tts.TextToSpeech
 import android.view.View
+import android.widget.EditText
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
@@ -61,6 +62,7 @@ class MainActivity : AppCompatActivity(), RecognitionListener {
     private var networkCallback: ConnectivityManager.NetworkCallback? = null
     private var textToSpeech: TextToSpeech? = null
     private var isTtsReady = false
+    private lateinit var sessionStorage: SessionStorage
 
     // Accumulated emotion counts for pie chart
     private val emotionCounts = mutableMapOf(
@@ -110,6 +112,9 @@ class MainActivity : AppCompatActivity(), RecognitionListener {
         // Initialize emotion analyzer
         analyzer = EmotionAnalyzer()
         
+        // Initialize session storage
+        sessionStorage = SessionStorage(this)
+        
         // Initialize TextToSpeech for demo mode
         textToSpeech = TextToSpeech(this) { status ->
             if (status == TextToSpeech.SUCCESS) {
@@ -146,6 +151,11 @@ class MainActivity : AppCompatActivity(), RecognitionListener {
         // Setup FAB
         binding.recordFab.setOnClickListener {
             permissionLauncher.launch(Manifest.permission.RECORD_AUDIO)
+        }
+
+        // Setup Text Input FAB
+        binding.textInputFab.setOnClickListener {
+            showTextInputDialog()
         }
 
         // Setup speech recognizer
@@ -196,6 +206,10 @@ class MainActivity : AppCompatActivity(), RecognitionListener {
             }
             R.id.action_demo_mode -> {
                 showDemoModeDialog()
+                true
+            }
+            R.id.action_session_history -> {
+                showSessionHistory()
                 true
             }
             R.id.action_export_csv -> {
@@ -446,6 +460,9 @@ class MainActivity : AppCompatActivity(), RecognitionListener {
     }
 
     private fun resetSession() {
+        // Auto-save current session before clearing
+        autoSaveSession()
+
         emotionPoints.clear()
         adapter.submitList(emptyList())
         emotionCounts.replaceAll { _, _ -> 0 }
@@ -521,6 +538,164 @@ class MainActivity : AppCompatActivity(), RecognitionListener {
             "🎤 \"${text.take(35)}${if (text.length > 35) "..." else ""}\"",
             Snackbar.LENGTH_LONG
         ).show()
+    }
+
+    // ---------- Text Input Mode ----------
+
+    private fun showTextInputDialog() {
+        val editText = EditText(this).apply {
+            hint = getString(R.string.text_mode_hint)
+            minLines = 3
+            maxLines = 6
+            setPadding(48, 32, 48, 16)
+            setBackgroundResource(android.R.color.transparent)
+            inputType = android.text.InputType.TYPE_CLASS_TEXT or
+                    android.text.InputType.TYPE_TEXT_FLAG_MULTI_LINE or
+                    android.text.InputType.TYPE_TEXT_FLAG_CAP_SENTENCES
+        }
+
+        MaterialAlertDialogBuilder(this)
+            .setTitle(R.string.text_mode_title)
+            .setView(editText)
+            .setPositiveButton(R.string.text_mode_analyze) { _, _ ->
+                val text = editText.text.toString().trim()
+                if (text.isNotBlank()) {
+                    processTextInput(text)
+                } else {
+                    Toast.makeText(this, "Please enter some text", Toast.LENGTH_SHORT).show()
+                }
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
+
+        // Auto-show keyboard
+        editText.requestFocus()
+        handler.postDelayed({
+            val imm = getSystemService(android.content.Context.INPUT_METHOD_SERVICE) as android.view.inputmethod.InputMethodManager
+            imm.showSoftInput(editText, android.view.inputmethod.InputMethodManager.SHOW_IMPLICIT)
+        }, 200)
+    }
+
+    private fun processTextInput(text: String) {
+        // Initialize session start time if needed
+        if (sessionStartMs == 0L) {
+            sessionStartMs = System.currentTimeMillis()
+        }
+
+        // Update status to show text mode
+        binding.statusText.text = getString(R.string.mode_text)
+        binding.modeText.text = getString(R.string.mode_text)
+        binding.modeText.setTextColor(ContextCompat.getColor(this, R.color.md_theme_light_tertiary))
+
+        // Analyze the text
+        val currentTime = System.currentTimeMillis()
+        val point = analyzer.analyze(text, currentTime)
+
+        // Add to UI
+        addEmotionPoint(point)
+
+        // Restore status after a moment
+        handler.postDelayed({
+            updateStatusCard(isOnline = isOnline, isRecording = isRecording)
+        }, 2000)
+
+        // Show feedback
+        val emotionName = point.emotion.replaceFirstChar { it.uppercase() }
+        val confidence = (point.confidence * 100).toInt()
+        Snackbar.make(
+            binding.rootLayout,
+            "✍️ $emotionName ($confidence%) — \"${text.take(30)}${if (text.length > 30) "..." else ""}\"",
+            Snackbar.LENGTH_LONG
+        ).setBackgroundTint(getEmotionColor(point.emotion))
+            .setTextColor(Color.WHITE)
+            .show()
+    }
+
+    // ---------- Session History ----------
+
+    private fun showSessionHistory() {
+        val sessions = sessionStorage.loadSessions()
+
+        if (sessions.isEmpty()) {
+            MaterialAlertDialogBuilder(this)
+                .setTitle(R.string.session_history_title)
+                .setMessage(R.string.no_sessions)
+                .setPositiveButton("OK", null)
+                .show()
+            return
+        }
+
+        val sessionLabels = sessions.map { session ->
+            val emoji = when (session.dominantEmotion.lowercase()) {
+                "joy" -> "😊"
+                "sad" -> "😢"
+                "anger" -> "😠"
+                "fear" -> "😨"
+                "surprise" -> "😲"
+                else -> "😐"
+            }
+            "$emoji  ${session.getFormattedDate()}\n" +
+            "     ${session.sampleCount} samples · " +
+            "${session.dominantEmotion.replaceFirstChar { it.uppercase() }} · " +
+            "${(session.avgConfidence * 100).toInt()}% confidence · " +
+            session.getFormattedDuration()
+        }.toTypedArray()
+
+        MaterialAlertDialogBuilder(this)
+            .setTitle(R.string.session_history_title)
+            .setItems(sessionLabels) { _, which ->
+                showSessionDetail(sessions[which])
+            }
+            .setNeutralButton("Clear All") { _, _ ->
+                MaterialAlertDialogBuilder(this)
+                    .setTitle("Clear All Sessions")
+                    .setMessage("Delete all saved session history?")
+                    .setPositiveButton("Delete") { _, _ ->
+                        sessionStorage.clearAllSessions()
+                        Toast.makeText(this, "Session history cleared", Toast.LENGTH_SHORT).show()
+                    }
+                    .setNegativeButton("Cancel", null)
+                    .show()
+            }
+            .setNegativeButton("Close", null)
+            .show()
+    }
+
+    private fun showSessionDetail(session: SessionSummary) {
+        val distribution = session.emotionCounts
+            .filter { it.value > 0 }
+            .entries
+            .sortedByDescending { it.value }
+            .joinToString("\n") { entry ->
+                val emoji = when (entry.key.lowercase()) {
+                    "joy" -> "😊"
+                    "sad" -> "😢"
+                    "anger" -> "😠"
+                    "fear" -> "😨"
+                    "surprise" -> "😲"
+                    else -> "😐"
+                }
+                "$emoji ${entry.key.replaceFirstChar { it.uppercase() }}: ${entry.value} samples"
+            }
+
+        MaterialAlertDialogBuilder(this)
+            .setTitle("Session — ${session.getFormattedDate()}")
+            .setMessage(
+                "📊 Session Summary\n\n" +
+                "Samples: ${session.sampleCount}\n" +
+                "Duration: ${session.getFormattedDuration()}\n" +
+                "Dominant: ${session.dominantEmotion.replaceFirstChar { it.uppercase() }}\n" +
+                "Avg Confidence: ${(session.avgConfidence * 100).toInt()}%\n\n" +
+                "🎯 Emotion Distribution:\n$distribution"
+            )
+            .setPositiveButton("OK", null)
+            .show()
+    }
+
+    private fun autoSaveSession() {
+        if (emotionPoints.isNotEmpty()) {
+            sessionStorage.saveSession(emotionPoints, emotionCounts, sessionStartMs)
+        }
     }
 
     // ---------- CSV Export ----------
@@ -898,6 +1073,9 @@ class MainActivity : AppCompatActivity(), RecognitionListener {
     }
 
     override fun onDestroy() {
+        // Auto-save session before destroying
+        autoSaveSession()
+
         handler.removeCallbacks(processRunnable)
         handler.removeCallbacks(durationRunnable)
         NetworkUtil.unregisterNetworkCallback(this, networkCallback)
