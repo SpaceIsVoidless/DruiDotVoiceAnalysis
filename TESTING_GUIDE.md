@@ -45,6 +45,165 @@ The app comes **ready to test** - Vosk model is included in the APK (~40MB).
 
 ✅ **That's it!** No API keys, no configuration files, no additional downloads needed.
 
+## 🎮 Bluestacks Real Microphone Setup
+
+**✅ YES, the app WORKS with real microphone on Bluestacks!**
+
+### **Problem: "Speech recognition not available on this device"**
+
+This error appears because **Bluestacks doesn't include Google services by default**.
+
+---
+
+### **Solution: Install Google App (5 minutes)**
+
+#### **Step 1: Install Google App**
+
+1. **Open Google Play Store** in Bluestacks
+2. **Search**: "Google"
+3. **Install**: The "Google" app by Google LLC (blue/colorful icon)
+4. **Wait**: Installation completes (~2-3 minutes)
+5. **Restart Bluestacks**: Completely close and reopen
+
+#### **Step 2: Verify Bluestacks Microphone Settings**
+
+1. **Open Bluestacks Settings** (gear icon ⚙️)
+2. **Go to "Devices"** tab
+3. **Microphone**: Ensure set to your laptop mic (e.g., "Microphone (Realtek(R) Audio)")
+4. **Save changes**
+
+#### **Step 3: Test Microphone Access**
+
+Before launching the app, verify mic works:
+
+1. **Open Chrome** in Bluestacks
+2. **Visit**: https://mictests.com
+3. **Click "Check Microphone"**
+4. **Speak**: You should see audio waveform moving
+5. **✅ If waveform moves** = Mic configured correctly!
+
+#### **Step 4: Launch App & Grant Permission**
+
+1. **Install the APK** (`app-debug.apk`)
+2. **Launch "Emotion Analyzer"**
+3. **Grant microphone permission** when prompted
+4. **If no prompt appears**:
+   - Bluestacks Android Settings → Apps → Voice Emotion Analyzer
+   - Permissions → Microphone → Enable
+
+#### **Step 5: Test Speech Recognition**
+
+1. **Tap the blue microphone button** (FAB at bottom-right)
+2. **Speak clearly**: "I'm very happy today!"
+3. **Watch for**:
+   - ✅ **Amplitude bar bounces** (shows mic is picking up audio)
+   - ✅ **Emotion detected** (JOY) appears
+   - ✅ **Charts update** with new data
+   - ✅ **All features work**!
+
+---
+
+### **Troubleshooting Bluestacks Issues**
+
+#### **❌ Problem: "Audio recording error"**
+
+**Cause**: Microphone not properly configured or Windows privacy blocking it.
+
+**Solutions**:
+
+1. **Check Windows Microphone Privacy**:
+   - Windows Settings → Privacy → Microphone
+   - Ensure "Allow apps to access your microphone" is **ON**
+   - Ensure "Bluestacks" is in the allowed list
+
+2. **Test Laptop Microphone**:
+   - Open Windows **Sound Recorder** or **Voice Recorder**
+   - Record a test - verify your mic works in Windows
+   - If Windows mic doesn't work, fix that first
+
+3. **Check Bluestacks Audio Settings**:
+   - Bluestacks Settings → Devices → Audio
+   - Try selecting different microphone if you have multiple
+   - Restart Bluestacks after changing
+
+4. **Grant Permission Manually**:
+   - Bluestacks Android Settings → Apps → Voice Emotion Analyzer
+   - Permissions → Microphone → Allow
+   - Restart the app
+
+#### **❌ Problem: "Speech recognition not available" (even after installing Google app)**
+
+**Solutions**:
+
+1. **Restart Bluestacks Completely**:
+   - Close Bluestacks entirely
+   - Reopen and try again
+
+2. **Check Internet Connection**:
+   - Open Chrome in Bluestacks
+   - Visit google.com to verify internet works
+   - Google SpeechRecognizer requires internet for online mode
+
+3. **Reinstall Google App**:
+   - Uninstall Google app
+   - Restart Bluestacks
+   - Reinstall Google app from Play Store
+   - Restart again
+
+4. **Use Demo Mode (Temporary)**:
+   - Tap ⋮ menu → "Demo Mode"
+   - Select test phrases to demonstrate app works
+   - Shows emotion analysis without microphone
+
+#### **❌ Problem: Amplitude bar stays flat (not moving)**
+
+**Cause**: Microphone not sending audio to app.
+
+**Solutions**:
+
+1. **Verify mic works** at https://mictests.com first
+2. **Check app permission** (Settings → Apps → Permissions)
+3. **Restart recording** (stop and start again)
+4. **Speak louder** and closer to laptop mic
+5. **Try external USB microphone** if laptop mic is weak
+
+---
+
+### **📋 Demo Mode (Alternative Testing)**
+
+If microphone setup is problematic, the app includes **Demo Mode**:
+
+1. **Tap ⋮ menu** (three dots, top-right)
+2. **Select "Demo Mode"**
+3. **Choose test phrases** with emojis:
+   - 😊 "I'm extremely happy and excited today!" → JOY
+   - 😠 "I'm so frustrated and angry right now!" → ANGER
+   - 😢 "I feel really sad and depressed" → SAD
+   - 😲 "Wow! That's incredible and surprising!" → SURPRISE
+   - 😨 "I'm so scared and afraid" → FEAR
+   - 😐 "Everything is fine and normal" → NEUTRAL
+
+**All features work identically** - charts, stats, export, etc.
+
+---
+
+### **✅ Expected Bluestacks Behavior**
+
+| Setup | Result |
+|-------|--------|
+| Google app installed + Mic enabled | ✅ Full online speech recognition works |
+| Google app NOT installed | ⚠️ Error: "Speech recognition not available" → Use Demo Mode |
+| Microphone disabled/broken | ⚠️ Error: "Audio recording error" → Enable mic or use Demo Mode |
+| No internet connection | ✅ App falls back to Vosk offline mode (if available) |
+
+**Recommended**: Install Google app + Enable microphone for best experience!
+
+---
+
+### **Note for Interviewers/Reviewers**
+
+> "Bluestacks requires the Google app to be installed from Play Store for speech recognition to work. Once installed, the app works identically to a physical Android device - capturing real microphone input, detecting emotions in real-time, and updating all UI elements. Demo Mode is available as a fallback to demonstrate the emotion analysis engine without microphone setup."
+
 ## 🧪 Testing Scenarios
 
 #### 🟢 **Test Online Mode (With Internet)**

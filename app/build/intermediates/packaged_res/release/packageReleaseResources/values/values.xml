@@ -76,6 +76,7 @@
     <color name="text_hint">#94A3B8</color>
     <color name="text_primary">#0F172A</color>
     <color name="text_secondary">#64748B</color>
+    <string name="action_demo_mode">Demo Mode</string>
     <string name="action_export_csv">Export CSV</string>
     <string name="action_reset">Reset Session</string>
     <string name="amplitude_label">Input Level</string>
@@ -84,6 +85,8 @@
     <string name="confidence_label">Confidence:</string>
     <string name="confidence_placeholder">—</string>
     <string name="current_emotion">Current Emotion</string>
+    <string name="demo_mode_message">Select a phrase to simulate speech input and see emotion analysis in action:</string>
+    <string name="demo_mode_title">Demo Mode - Test Phrases</string>
     <string name="dominant_emotion">Dominant</string>
     <string name="emotion_distribution">Emotion Distribution</string>
     <string name="emotion_timeline">Emotion Timeline</string>

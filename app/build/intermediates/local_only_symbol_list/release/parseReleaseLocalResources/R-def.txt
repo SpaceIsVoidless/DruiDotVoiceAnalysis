@@ -83,6 +83,7 @@ drawable ic_mic
 drawable ic_share
 drawable ic_stop
 drawable status_indicator
+id action_demo_mode
 id action_export_csv
 id action_reset
 id action_share
@@ -119,6 +120,7 @@ layout item_emotion
 menu main_menu
 mipmap ic_launcher
 mipmap ic_launcher_round
+string action_demo_mode
 string action_export_csv
 string action_reset
 string amplitude_label
@@ -127,6 +129,8 @@ string avg_confidence
 string confidence_label
 string confidence_placeholder
 string current_emotion
+string demo_mode_message
+string demo_mode_title
 string dominant_emotion
 string emotion_distribution
 string emotion_timeline

@@ -44,4 +44,8 @@
     <!-- Network status changes -->
     <string name="network_online">Back online</string>
     <string name="network_offline">You\'re offline</string>
+
+    <!-- Demo Mode -->
+    <string name="action_demo_mode">Demo Mode</string>
+    <string name="demo_mode_title">Select a Demo Phrase</string>
 </resources>

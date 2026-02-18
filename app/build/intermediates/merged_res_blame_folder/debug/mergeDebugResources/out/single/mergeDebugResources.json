@@ -8,14 +8,6 @@
         "source": "C:\\Users\\Admin\\.gradle\\daemon\\8.13\\com.example.voiceemotionanalyzer.app-main-40:\\layout\\activity_main.xml"
     },
     {
-        "merged": "com.example.voiceemotionanalyzer.app-debug-38:/drawable_ic_launcher_background.xml.flat",
-        "source": "com.example.voiceemotionanalyzer.app-main-40:/drawable/ic_launcher_background.xml"
-    },
-    {
-        "merged": "com.example.voiceemotionanalyzer.app-debug-38:/drawable_ic_launcher_foreground.xml.flat",
-        "source": "com.example.voiceemotionanalyzer.app-main-40:/drawable/ic_launcher_foreground.xml"
-    },
-    {
         "merged": "C:\\Users\\Admin\\.gradle\\daemon\\8.13\\com.example.voiceemotionanalyzer.app-debug-38:\\drawable_status_indicator.xml.flat",
         "source": "C:\\Users\\Admin\\.gradle\\daemon\\8.13\\com.example.voiceemotionanalyzer.app-main-40:\\drawable\\status_indicator.xml"
     },

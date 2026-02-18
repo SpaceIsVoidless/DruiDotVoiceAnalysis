@@ -3248,6 +3248,7 @@ id action_bar_subtitle
 id action_bar_title
 id action_container
 id action_context_bar
+id action_demo_mode
 id action_divider
 id action_export_csv
 id action_image
@@ -3951,6 +3952,7 @@ string abc_searchview_description_voice
 string abc_shareactionprovider_share_with
 string abc_shareactionprovider_share_with_application
 string abc_toolbar_collapse_description
+string action_demo_mode
 string action_export_csv
 string action_reset
 string amplitude_label
@@ -3978,6 +3980,8 @@ string clear_text_end_icon_content_description
 string confidence_label
 string confidence_placeholder
 string current_emotion
+string demo_mode_message
+string demo_mode_title
 string dominant_emotion
 string emotion_distribution
 string emotion_timeline

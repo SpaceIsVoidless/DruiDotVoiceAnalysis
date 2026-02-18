@@ -11,6 +11,7 @@ import android.os.Looper
 import android.speech.RecognitionListener
 import android.speech.RecognizerIntent
 import android.speech.SpeechRecognizer
+import android.speech.tts.TextToSpeech
 import android.view.View
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
@@ -58,6 +59,8 @@ class MainActivity : AppCompatActivity(), RecognitionListener {
     private var useVosk = false
     private val coroutineScope = CoroutineScope(Dispatchers.Main + Job())
     private var networkCallback: ConnectivityManager.NetworkCallback? = null
+    private var textToSpeech: TextToSpeech? = null
+    private var isTtsReady = false
 
     // Accumulated emotion counts for pie chart
     private val emotionCounts = mutableMapOf(
@@ -106,6 +109,14 @@ class MainActivity : AppCompatActivity(), RecognitionListener {
 
         // Initialize emotion analyzer
         analyzer = EmotionAnalyzer()
+        
+        // Initialize TextToSpeech for demo mode
+        textToSpeech = TextToSpeech(this) { status ->
+            if (status == TextToSpeech.SUCCESS) {
+                val result = textToSpeech?.setLanguage(Locale.US)
+                isTtsReady = result != TextToSpeech.LANG_MISSING_DATA && result != TextToSpeech.LANG_NOT_SUPPORTED
+            }
+        }
         
         // Initialize Vosk for offline mode
         voskRecognizer = VoskRecognizer(this)
@@ -183,6 +194,10 @@ class MainActivity : AppCompatActivity(), RecognitionListener {
                 exportAndShare()
                 true
             }
+            R.id.action_demo_mode -> {
+                showDemoModeDialog()
+                true
+            }
             R.id.action_export_csv -> {
                 exportCsv()
                 true
@@ -204,20 +219,32 @@ class MainActivity : AppCompatActivity(), RecognitionListener {
         if (useVosk) {
             // Use Vosk for offline recognition
             Toast.makeText(this, "Using offline mode", Toast.LENGTH_SHORT).show()
-        } else if (SpeechRecognizer.isRecognitionAvailable(this)) {
-            // Use Android SpeechRecognizer for online
-            speechRecognizer = SpeechRecognizer.createSpeechRecognizer(this)
-            speechRecognizer.setRecognitionListener(this)
-            recognizerIntent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
-                putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
-                putExtra(RecognizerIntent.EXTRA_PARTIAL_RESULTS, true)
-                putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault())
-                putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 1)
-            }
         } else {
-            Toast.makeText(this, R.string.no_mic, Toast.LENGTH_LONG).show()
-            binding.recordFab.isEnabled = false
-            updateStatusCard(isOnline = false, isRecording = false)
+            try {
+                // Try to create SpeechRecognizer - works on Bluestacks if Google app installed
+                speechRecognizer = SpeechRecognizer.createSpeechRecognizer(this)
+                speechRecognizer.setRecognitionListener(this)
+                recognizerIntent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
+                    putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
+                    putExtra(RecognizerIntent.EXTRA_PARTIAL_RESULTS, true)
+                    putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault())
+                    putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 1)
+                    
+                    // Bluestacks-specific settings for better compatibility
+                    putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE, packageName)
+                    putExtra(RecognizerIntent.EXTRA_SPEECH_INPUT_MINIMUM_LENGTH_MILLIS, 15000L)
+                    putExtra(RecognizerIntent.EXTRA_SPEECH_INPUT_COMPLETE_SILENCE_LENGTH_MILLIS, 3000L)
+                    putExtra(RecognizerIntent.EXTRA_SPEECH_INPUT_POSSIBLY_COMPLETE_SILENCE_LENGTH_MILLIS, 3000L)
+                }
+            } catch (e: Exception) {
+                // If Google services not available, suggest installing Google app
+                Toast.makeText(
+                    this,
+                    "Speech recognition unavailable. Install Google app from Play Store or use Demo Mode.",
+                    Toast.LENGTH_LONG
+                ).show()
+                // Don't disable FAB - let user try Demo Mode instead
+            }
         }
     }
 
@@ -440,6 +467,60 @@ class MainActivity : AppCompatActivity(), RecognitionListener {
         binding.statsCard.visibility = View.GONE
 
         Snackbar.make(binding.rootLayout, "Session reset", Snackbar.LENGTH_SHORT).show()
+    }
+
+    // ---------- Demo Mode ----------
+
+    private fun showDemoModeDialog() {
+        val demoTexts = arrayOf(
+            "😊 I'm extremely happy and excited today!",
+            "😄 This is wonderful and amazing!",
+            "😠 I'm so frustrated and angry right now!",
+            "😡 This is terrible and makes me furious!",
+            "😢 I feel really sad and depressed",
+            "💔 I'm heartbroken and disappointed",
+            "😲 Wow! That's incredible and surprising!",
+            "🤯 I'm shocked and amazed!",
+            "😨 I'm so scared and afraid",
+            "😰 This is frightening and worrying",
+            "😐 Everything is fine and normal",
+            "🙂 Just another regular day"
+        )
+
+        MaterialAlertDialogBuilder(this)
+            .setTitle(R.string.demo_mode_title)
+            .setItems(demoTexts) { _, which ->
+                val selectedText = demoTexts[which].substringAfter(" ") // Remove emoji prefix
+                processDemoText(selectedText)
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
+    }
+
+    private fun processDemoText(text: String) {
+        // Play the phrase using Text-to-Speech
+        if (isTtsReady) {
+            textToSpeech?.speak(text, TextToSpeech.QUEUE_FLUSH, null, null)
+        }
+        
+        // Initialize session start time if not already recording
+        if (sessionStartMs == 0L) {
+            sessionStartMs = System.currentTimeMillis()
+        }
+
+        // Analyze the demo text directly
+        val currentTime = System.currentTimeMillis()
+        val point = analyzer.analyze(text, currentTime)
+        
+        // Add to UI
+        addEmotionPoint(point)
+        
+        // Show feedback
+        Snackbar.make(
+            binding.rootLayout,
+            "🎤 \"${text.take(35)}${if (text.length > 35) "..." else ""}\"",
+            Snackbar.LENGTH_LONG
+        ).show()
     }
 
     // ---------- CSV Export ----------
@@ -720,10 +801,62 @@ class MainActivity : AppCompatActivity(), RecognitionListener {
     override fun onEndOfSpeech() = Unit
 
     override fun onError(error: Int) {
-        if (isRecording && ::speechRecognizer.isInitialized) {
-            handler.postDelayed({ 
-                if (isRecording) speechRecognizer.startListening(recognizerIntent) 
-            }, 600)
+        val errorMsg = when (error) {
+            SpeechRecognizer.ERROR_AUDIO -> "Audio recording error"
+            SpeechRecognizer.ERROR_CLIENT -> "Client error"
+            SpeechRecognizer.ERROR_INSUFFICIENT_PERMISSIONS -> "Microphone permission denied"
+            SpeechRecognizer.ERROR_NETWORK -> "Network error"
+            SpeechRecognizer.ERROR_NETWORK_TIMEOUT -> "Network timeout"
+            SpeechRecognizer.ERROR_NO_MATCH -> "No speech detected"
+            SpeechRecognizer.ERROR_RECOGNIZER_BUSY -> "Recognizer busy"
+            SpeechRecognizer.ERROR_SERVER -> "Server error"
+            SpeechRecognizer.ERROR_SPEECH_TIMEOUT -> "No speech input"
+            else -> "Unknown error: $error"
+        }
+        
+        android.util.Log.e("VoiceEmotion", "Speech recognition error: $errorMsg (code: $error)")
+        
+        // Handle specific errors
+        when (error) {
+            SpeechRecognizer.ERROR_NO_MATCH,
+            SpeechRecognizer.ERROR_SPEECH_TIMEOUT -> {
+                // Normal - just restart recognition
+                if (isRecording && ::speechRecognizer.isInitialized) {
+                    handler.postDelayed({ 
+                        if (isRecording) speechRecognizer.startListening(recognizerIntent) 
+                    }, 500)
+                }
+            }
+            SpeechRecognizer.ERROR_AUDIO -> {
+                // Microphone access issue - common on emulators
+                Toast.makeText(
+                    this,
+                    "⚠️ Microphone access issue. Check Bluestacks audio settings or use Demo Mode (⋮ menu)",
+                    Toast.LENGTH_LONG
+                ).show()
+                if (isRecording) stopRecording()
+            }
+            SpeechRecognizer.ERROR_INSUFFICIENT_PERMISSIONS -> {
+                Toast.makeText(this, "Microphone permission required", Toast.LENGTH_SHORT).show()
+                if (isRecording) stopRecording()
+            }
+            SpeechRecognizer.ERROR_RECOGNIZER_BUSY -> {
+                // Wait a bit longer and retry
+                if (isRecording && ::speechRecognizer.isInitialized) {
+                    handler.postDelayed({ 
+                        if (isRecording) speechRecognizer.startListening(recognizerIntent) 
+                    }, 1000)
+                }
+            }
+            else -> {
+                // For other errors, show message but keep trying
+                Snackbar.make(binding.rootLayout, errorMsg, Snackbar.LENGTH_SHORT).show()
+                if (isRecording && ::speechRecognizer.isInitialized) {
+                    handler.postDelayed({ 
+                        if (isRecording) speechRecognizer.startListening(recognizerIntent) 
+                    }, 600)
+                }
+            }
         }
     }
 
@@ -772,6 +905,8 @@ class MainActivity : AppCompatActivity(), RecognitionListener {
             speechRecognizer.destroy()
         }
         voskRecognizer?.destroy()
+        textToSpeech?.stop()
+        textToSpeech?.shutdown()
         coroutineScope.cancel()
         super.onDestroy()
     }
